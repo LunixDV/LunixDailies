@@ -187,10 +187,20 @@ shareNativeBtn.addEventListener('click', async () => {
   }
 
   try {
+    const imageFile = await createRemoteImageFile(currentDaily.imageUrl)
+    if (imageFile && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+      await navigator.share({
+        title: currentDaily.title,
+        text,
+        files: [imageFile],
+      })
+      return
+    }
+
     await navigator.share({
       title: currentDaily.title,
       text,
-      url: window.location.href,
+      url: currentDaily.imageUrl || window.location.href,
     })
   } catch {
     statusEl.textContent = 'Share canceled.'
@@ -420,6 +430,15 @@ async function createShareImage(daily) {
   ctx.font = '500 28px Arial'
   ctx.fillText(new Date().toDateString(), 80, 1210)
 
+  // Keep your signature visibly embedded in the exported file.
+  ctx.fillStyle = '#f5e6b8'
+  ctx.font = '700 34px Georgia'
+  ctx.fillText(SIGN_OFF, 80, 1260)
+
+  ctx.fillStyle = '#d6c389'
+  ctx.font = '500 22px Arial'
+  wrapText(ctx, SIGNATURE_TAGLINE, 80, 1298, 920, 30)
+
   return await new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
@@ -553,4 +572,24 @@ function toPixabayQuery(input) {
   }
 
   return query
+}
+
+async function createRemoteImageFile(imageUrl) {
+  if (!imageUrl) {
+    return null
+  }
+
+  try {
+    const response = await fetch(imageUrl)
+    if (!response.ok) {
+      return null
+    }
+
+    const blob = await response.blob()
+    const ext = blob.type.includes('png') ? 'png' : 'jpg'
+    const type = blob.type || (ext === 'png' ? 'image/png' : 'image/jpeg')
+    return new File([blob], `lunixdailies-visual-${dateTag()}.${ext}`, { type })
+  } catch {
+    return null
+  }
 }
