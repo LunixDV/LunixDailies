@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="LunixDailies icon 192">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#050505"/>
+      <stop offset="100%" stop-color="#151008"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#8f6b1d"/>
+      <stop offset="100%" stop-color="#d7b65e"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  <path d="M42 146V46h18v84h54v16H42z" fill="url(#gold)"/>
+  <circle cx="132" cy="70" r="20" fill="none" stroke="url(#gold)" stroke-width="8"/>
+  <path d="M146 84l20 20" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+</svg>

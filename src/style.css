@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Manrope:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #070707;
+  --bg-2: #111111;
+  --gold: #c9a23b;
+  --gold-soft: #f0daa2;
+  --ink: #f6efda;
+  --muted: #aa9c76;
+  --line: rgba(201, 162, 59, 0.33);
+  --panel: rgba(17, 17, 17, 0.88);
+  --shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(201, 162, 59, 0.22), transparent 35%),
+    radial-gradient(circle at 80% 90%, rgba(201, 162, 59, 0.14), transparent 40%),
+    linear-gradient(135deg, var(--bg), var(--bg-2));
+}
+
+#app {
+  min-height: 100svh;
+  padding: 1.2rem;
+}
+
+.shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.brand,
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  gap: 1rem;
+}
+
+.brand-mark {
+  width: 56px;
+  height: 56px;
+}
+
+.eyebrow {
+  color: var(--gold-soft);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 0.72rem;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  color: var(--gold-soft);
+}
+
+h1 {
+  font-size: clamp(1.2rem, 2.8vw, 2rem);
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.panel {
+  padding: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--gold-soft);
+  font-size: 0.9rem;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0e0e0e;
+  color: var(--ink);
+  padding: 0.7rem 0.8rem;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  background: #111;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: #171717;
+}
+
+.btn.gold {
+  background: linear-gradient(120deg, #8f6b1d, #c9a23b);
+  color: #131313;
+  font-weight: 700;
+}
+
+.btn.ghost {
+  color: var(--gold-soft);
+  background: transparent;
+}
+
+.form-actions {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.form-actions .btn {
+  width: 100%;
+}
+
+.grid .btn {
+  grid-column: span 2;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.tiny {
+  font-size: 0.82rem;
+  margin-top: 0.65rem;
+}
+
+.result {
+  margin-top: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.result.empty {
+  color: var(--muted);
+}
+
+.visual {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 280px;
+}
+
+.result h3 {
+  margin-top: 0.8rem;
+}
+
+.result ul {
+  margin: 0.8rem 0;
+  padding-left: 1.1rem;
+  color: var(--ink);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tags span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  color: var(--gold-soft);
+}
+
+.share-actions {
+  margin-top: 0.85rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.channel-links {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
+.channel-links a {
+  border: 1px solid var(--line);
+  color: var(--gold-soft);
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+}
+
+@media (min-width: 860px) {
+  .shell {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'brand brand'
+      'form output';
+  }
+
+  .brand {
+    grid-area: brand;
+  }
+
+  .form-panel {
+    grid-area: form;
+  }
+
+  .output-panel {
+    grid-area: output;
+  }
+}
+
+@media (max-width: 859px) {
+  .brand {
+    grid-template-columns: auto 1fr;
+  }
+
+  .brand .btn {
+    grid-column: span 2;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid .btn {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    grid-column: span 1;
+    grid-template-columns: 1fr;
+  }
+
+  .share-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ios-tip {
+  color: #d1b66a;
+}
