@@ -276,7 +276,7 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
     communityInstructions,
     'Write for cross-platform sharing: Telegram channels, WhatsApp groups, and X.',
     'Keep the copy practical and direct. Prioritize clear value and actions that can pay out quickly.',
-    'Output plain text only. Do not use markdown formatting.',
+    'Return JSON only. Do not include markdown, code fences, or any extra text.',
     'Do not use double asterisks (**).',
     'Do not use em dash characters.',
     'Use at most 2 emojis total across the full post.',
@@ -302,11 +302,12 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
     },
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
-      temperature: 0.7,
+      temperature: 0.2,
+      response_format: { type: 'json_object' },
       messages: [
         {
           role: 'system',
-          content: 'You produce structured daily social content in JSON.',
+          content: 'You produce structured daily social content and must return valid JSON only.',
         },
         {
           role: 'user',
@@ -323,15 +324,7 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
   const data = await response.json()
   const content = data?.choices?.[0]?.message?.content
 
-  try {
-    return JSON.parse(content)
-  } catch {
-    const match = content?.match(/\{[\s\S]*\}/)
-    if (match) {
-      return JSON.parse(match[0])
-    }
-    throw new Error('Groq returned non-JSON content.')
-  }
+  return JSON.parse(content)
 }
 
 function renderResult(daily) {
