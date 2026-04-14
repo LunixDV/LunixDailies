@@ -105,6 +105,10 @@ const SIGNATURE_TAGLINE = 'We do not just upskill, we make it pay out. Changing 
 const SIGN_OFF = 'Signed, TADS'
 
 const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
+const isWindows =
+  /windows/i.test(navigator.userAgent) ||
+  /win/i.test(navigator.platform || '') ||
+  /windows/i.test(navigator.userAgentData?.platform || '')
 const inStandalone = window.matchMedia('(display-mode: standalone)').matches
 
 if (isIos && !inStandalone) {
@@ -179,6 +183,19 @@ shareNativeBtn.addEventListener('click', async () => {
   }
 
   const text = buildShareText(currentDaily)
+
+  if (isWindows) {
+    try {
+      const blob = await createShareImage(currentDaily)
+      downloadBlob(blob, `lunixdailies-${dateTag()}.png`)
+      await navigator.clipboard.writeText(text)
+      statusEl.textContent = 'Windows detected. Downloaded share image and copied post text.'
+      return
+    } catch {
+      statusEl.textContent = 'Windows share fallback failed. Try Share As Image File.'
+      return
+    }
+  }
 
   if (!navigator.share) {
     await navigator.clipboard.writeText(text)
@@ -585,4 +602,13 @@ async function createRemoteImageFile(imageUrl) {
   } catch {
     return null
   }
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
