@@ -293,6 +293,9 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
     communityInstructions,
     'Write for cross-platform sharing: Telegram channels, WhatsApp groups, and X.',
     'Keep the copy practical and direct. Prioritize clear value and actions that can pay out quickly.',
+    'The output must be specific to the user input. Never output generic templates or vague advice.',
+    'Use concrete language tied directly to the provided topic, audience, and goal in every section.',
+    'Do not use placeholder phrasing like "learn in-demand skills" unless the topic explicitly asks for it.',
     'Return JSON only. Do not include markdown, code fences, or any extra text.',
     'Do not use double asterisks (**).',
     'Do not use em dash characters.',
@@ -310,6 +313,27 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
     `goal: ${effectiveGoal}`,
     `tone: ${tone}`,
   ].join('\n')
+
+  const strictRetryPrompt = [
+    'Your previous answer was too generic. Regenerate and be specific.',
+    'Every bullet must include a concrete action tied to the exact topic and audience below.',
+    'Title and summary must clearly reflect the supplied topic context and desired outcome.',
+    'Do not repeat stock self-improvement language.',
+    '',
+    prompt,
+  ].join('\n')
+
+  const first = await requestGroqJson(apiKey, prompt)
+  const firstNormalized = normalizePost(first)
+
+  if (!isGenericOutput(firstNormalized, { topic, audience: effectiveAudience, goal: effectiveGoal })) {
+    return first
+  }
+
+  return await requestGroqJson(apiKey, strictRetryPrompt)
+}
+
+async function requestGroqJson(apiKey, prompt) {
 
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -344,6 +368,41 @@ async function generateWithGroq({ topic, audience, goal, tone, community }) {
   return JSON.parse(content)
 }
 
+function isGenericOutput(post, { topic, audience, goal }) {
+  const text = [
+    post?.title || '',
+    post?.summary || '',
+    ...(Array.isArray(post?.bullets) ? post.bullets : []),
+  ]
+    .join(' ')
+    .toLowerCase()
+
+  const topicWords = String(topic)
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 3)
+  const audienceWords = String(audience)
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 3)
+  const goalWords = String(goal)
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 4)
+
+  const requiredTokens = [...topicWords.slice(0, 3), ...audienceWords.slice(0, 2), ...goalWords.slice(0, 2)]
+  const matched = requiredTokens.filter((word) => text.includes(word)).length
+
+  const genericPhrases = [
+    'learn in-demand skills',
+    'boost your career',
+    'take action now',
+    'see results quickly',
+  ]
+  const genericHits = genericPhrases.filter((phrase) => text.includes(phrase)).length
+
+  return matched < 2 || genericHits >= 2
+}
 function renderResult(daily) {
   const bullets = (daily.bullets || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')
   const tags = (daily.hashtags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')
